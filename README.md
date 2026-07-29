@@ -1,0 +1,2 @@
+# WickedRatings
+TV Rating Website
