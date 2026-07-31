@@ -24,10 +24,7 @@ export default function SearchBar() {
     setIsOpen(true);
 
     try {
-      // ⚠️ IMPORTANT: Replace this with your actual TMDB API Key from an environment variable
-      // Example: const apiKey = import.meta.env.VITE_TMDB_API_KEY;
-      const apiKey = 'YOUR_TMDB_API_KEY'; 
-      
+    const apiKey = import.meta.env.VITE_TMDB_API_KEY || 'YOUR_TMDB_API_KEY'; 
       // MOCK MODE: If no real key is provided, simulate a network request for testing the UI
       if (apiKey === 'YOUR_TMDB_API_KEY') {
         await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network latency
