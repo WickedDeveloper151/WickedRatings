@@ -1,3 +1,10 @@
+/* STREAMING_CHUNK: Injecting Tailwind core styles */
+@import "tailwindcss";
+
+/* STREAMING_CHUNK: Setting global dark mode defaults /
+body {
+/ ... existing code ... */
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
