@@ -39,26 +39,43 @@ export default function ReviewForm({ showName }) {
           <label className="block text-sm font-medium text-slate-300 mb-2">
             Your Rating <span className="text-red-400">*</span>
           </label>
-          <div className="flex items-center gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRating(star)}
-                onMouseEnter={() => setHoverRating(star)}
-                onMouseLeave={() => setHoverRating(0)}
-                className="focus:outline-none transition-transform hover:scale-110"
-              >
-                <Star
-                  size={28}
-                  className={`${
-                    (hoverRating || rating) >= star
-                      ? "text-yellow-400 fill-yellow-400"
-                      : "text-slate-600 fill-transparent"
-                  } transition-colors`}
-                />
-              </button>
-            ))}
+          <div className="flex items-center gap-1" onMouseLeave={() => setHoverRating(0)}>
+            {[1, 2, 3, 4, 5].map((star) => {
+              const current = hoverRating || rating;
+              const isFull = current >= star;
+              const isHalf = current >= star - 0.5 && !isFull;
+
+              return (
+                <div key={star} className="relative w-7 h-7 transition-transform hover:scale-110">
+                  {/* Background Empty Star */}
+                  <Star size={28} className="text-slate-600 fill-transparent absolute top-0 left-0" />
+                  
+                  {/* Foreground Filled Star (Clipped) */}
+                  <div 
+                    className="absolute top-0 left-0 h-full overflow-hidden pointer-events-none"
+                    style={{ width: isFull ? '100%' : isHalf ? '50%' : '0%' }}
+                  >
+                    <Star size={28} className="text-yellow-400 fill-yellow-400 absolute top-0 left-0 min-w-[28px]" />
+                  </div>
+
+                  {/* Clickable Overlay Halves */}
+                  <div className="absolute inset-0 flex">
+                    <button
+                      type="button"
+                      className="w-1/2 h-full focus:outline-none cursor-pointer"
+                      onClick={() => setRating(star - 0.5)}
+                      onMouseEnter={() => setHoverRating(star - 0.5)}
+                    />
+                    <button
+                      type="button"
+                      className="w-1/2 h-full focus:outline-none cursor-pointer"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                    />
+                  </div>
+                </div>
+              );
+            })}
             <span className="ml-3 text-sm font-semibold text-slate-400">
               {rating > 0 ? `${rating} / 5` : "Select a rating"}
             </span>

@@ -17,7 +17,7 @@ export default function ReviewFeed() {
       id: 2,
       user: "BingeWatcher99",
       avatar: "B",
-      rating: 4,
+      rating: 4.5,
       date: "1 week ago",
       text: "Starts off a little slow in the first few episodes, but once it finds its footing, it is completely unputdownable. Highly recommend sticking with it.",
       likes: 12,
@@ -54,13 +54,27 @@ export default function ReviewFeed() {
             
             {/* 5-Star Display */}
             <div className="flex gap-0.5">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  size={14}
-                  className={star <= review.rating ? "text-yellow-400 fill-yellow-400" : "text-slate-700 fill-slate-700"}
-                />
-              ))}
+              {[1, 2, 3, 4, 5].map((star) => {
+                const isFull = review.rating >= star;
+                const isHalf = review.rating >= star - 0.5 && !isFull;
+                
+                return (
+                  <div key={star} className="relative w-3.5 h-3.5">
+                    {/* Background Empty Star */}
+                    <Star size={14} className="text-slate-700 fill-slate-700 absolute top-0 left-0" />
+                    
+                    {/* Foreground Filled Star (Clipped) */}
+                    {(isFull || isHalf) && (
+                      <div 
+                        className="absolute top-0 left-0 h-full overflow-hidden" 
+                        style={{ width: isHalf ? '50%' : '100%' }}
+                      >
+                        <Star size={14} className="text-yellow-400 fill-yellow-400 absolute top-0 left-0 min-w-[14px]" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
