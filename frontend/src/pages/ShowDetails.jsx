@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Star, Calendar, Tv, Clapperboard, Loader2 } from 'lucide-react';
+import ReviewForm from '../components/ReviewForm';
+import ReviewFeed from '../components/ReviewFeed';
 
 export default function ShowDetails() {
-  // Extract the 'id' from the URL (e.g., /show/1396)
   const { id } = useParams();
   
   const [show, setShow] = useState(null);
@@ -16,13 +17,10 @@ export default function ShowDetails() {
       setError(null);
 
       try {
-        // Fetch API key from Vite environment variables
-        // We leave the fallback for the mock mode to work if the key isn't set yet
         const apiKey = import.meta.env.VITE_TMDB_API_KEY || 'YOUR_TMDB_API_KEY'; 
 
-        // MOCK MODE: Simulate a network request if no real key is provided
         if (apiKey === 'YOUR_TMDB_API_KEY') {
-          await new Promise(resolve => setTimeout(resolve, 600)); // Fake loading delay
+          await new Promise(resolve => setTimeout(resolve, 600)); 
           
           setShow({
             id: id,
@@ -42,7 +40,6 @@ export default function ShowDetails() {
           return;
         }
 
-        // REAL MODE: Fetching from TMDB /tv/{series_id} endpoint
         const response = await fetch(
           `https://api.themoviedb.org/3/tv/${id}?language=en-US`,
           {
@@ -66,7 +63,7 @@ export default function ShowDetails() {
     };
 
     fetchShowDetails();
-  }, [id]); // Re-run this effect whenever the URL ID changes
+  }, [id]);
 
   if (isLoading) {
     return (
@@ -102,11 +99,10 @@ export default function ShowDetails() {
             className="w-full h-full object-cover opacity-30"
           />
         )}
-        {/* Gradient overlay for smooth transition into the page body */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/60 to-transparent"></div>
       </div>
 
-      {/* Main Content Container (Pulled up over the backdrop) */}
+      {/* Main Content Container */}
       <div className="container mx-auto px-4 relative z-10 -mt-32 sm:-mt-48">
         <div className="flex flex-col md:flex-row gap-8">
           
@@ -171,11 +167,27 @@ export default function ShowDetails() {
           </div>
         </div>
 
-        {/* Placeholder for the Review System */}
-        <div className="mt-16 border-t border-slate-800 pt-12">
-          <h2 className="text-2xl font-bold text-white mb-6">User Reviews</h2>
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8 text-center text-slate-400">
-            <p>The review composer and feed will be built here!</p>
+        {/* The New Review System */}
+        <div className="mt-20 border-t border-slate-800 pt-12">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold text-white tracking-tight">Community Reviews</h2>
+            <span className="text-slate-400 font-medium">3 Reviews</span>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            
+            {/* Left Side: The Feed */}
+            <div className="lg:col-span-2 order-2 lg:order-1">
+              <ReviewFeed />
+            </div>
+
+            {/* Right Side: The Form */}
+            <div className="lg:col-span-1 order-1 lg:order-2">
+              <div className="sticky top-24">
+                <ReviewForm showName={show.name} />
+              </div>
+            </div>
+
           </div>
         </div>
 
