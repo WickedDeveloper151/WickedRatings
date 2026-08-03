@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Star, Send } from 'lucide-react';
 
-export default function ReviewForm({ showName }) {
+export default function ReviewForm({ showId, showName }) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (rating === 0) {
@@ -17,14 +17,31 @@ export default function ReviewForm({ showName }) {
 
     setIsSubmitting(true);
 
-    // MOCK SUBMISSION: Simulate network request to backend
-    setTimeout(() => {
-      console.log("Submitted Review:", { rating, reviewText, showName });
-      setRating(0);
-      setReviewText('');
+    try {
+      const response = await fetch('http://localhost:5000/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          showId: showId,
+          user: "Guest User", // Hardcoded for now
+          rating: rating,
+          text: reviewText
+        })
+      });
+
+      if (response.ok) {
+        setRating(0);
+        setHoverRating(0);
+        setReviewText('');
+        // Trigger the feed to refresh without reloading the page
+        window.dispatchEvent(new Event('reviewSubmitted'));
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      alert("Failed to connect to the backend server.");
+    } finally {
       setIsSubmitting(false);
-      alert("Review submitted successfully! (Check console for data)");
-    }, 800);
+    }
   };
 
   return (

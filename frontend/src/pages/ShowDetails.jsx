@@ -171,20 +171,19 @@ export default function ShowDetails() {
         <div className="mt-20 border-t border-slate-800 pt-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-white tracking-tight">Community Reviews</h2>
-            <span className="text-slate-400 font-medium">3 Reviews</span>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
             
             {/* Left Side: The Feed */}
             <div className="lg:col-span-2 order-2 lg:order-1">
-              <ReviewFeed />
+              <ReviewFeed showId={show.id} />
             </div>
 
             {/* Right Side: The Form */}
             <div className="lg:col-span-1 order-1 lg:order-2">
               <div className="sticky top-24">
-                <ReviewForm showName={show.name} />
+                <ReviewForm showId={show.id} showName={show.name} />
               </div>
             </div>
 

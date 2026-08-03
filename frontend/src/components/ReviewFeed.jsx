@@ -1,43 +1,52 @@
-import { Star, ThumbsUp, MessageSquare } from 'lucide-react';
+import { Star, ThumbsUp, MessageSquare, Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
-export default function ReviewFeed() {
-  // Mock data representing reviews fetched from your future database
-  const mockReviews = [
-    {
-      id: 1,
-      user: "CinemaJunkie",
-      avatar: "C",
-      rating: 5,
-      date: "2 days ago",
-      text: "Absolutely phenomenal from start to finish. The character development is masterclass and the cinematography blew me away. Can't wait to see what they do in the next season.",
-      likes: 24,
-      comments: 3
-    },
-    {
-      id: 2,
-      user: "BingeWatcher99",
-      avatar: "B",
-      rating: 4.5,
-      date: "1 week ago",
-      text: "Starts off a little slow in the first few episodes, but once it finds its footing, it is completely unputdownable. Highly recommend sticking with it.",
-      likes: 12,
-      comments: 0
-    },
-    {
-      id: 3,
-      user: "TVSnob",
-      avatar: "T",
-      rating: 2,
-      date: "1 month ago",
-      text: "Honestly, I don't get the hype. The pacing is weird and the dialogue feels forced. Might give it another try later, but dropped it after episode 4.",
-      likes: 4,
-      comments: 8
+export default function ReviewFeed({ showId }) {
+  const [reviews, setReviews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/reviews/${showId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch reviews:", error);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetchReviews();
+    
+    // Listen for a custom event so the feed updates when a new review is submitted
+    window.addEventListener('reviewSubmitted', fetchReviews);
+    return () => window.removeEventListener('reviewSubmitted', fetchReviews);
+  }, [showId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <div className="bg-slate-800/20 border border-slate-700/50 rounded-2xl p-8 text-center text-slate-400">
+        No reviews yet. Be the first to share your thoughts!
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {mockReviews.map((review) => (
+      {reviews.map((review) => (
         <div key={review.id} className="bg-slate-800/20 border border-slate-700/50 rounded-2xl p-6">
           
           {/* Review Header (User Info & Rating) */}
