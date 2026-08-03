@@ -27,7 +27,7 @@ let reviews = [
 // GET: Fetch all reviews for a specific show
 app.get('/api/reviews/:showId', (req, res) => {
   const { showId } = req.params;
-  const showReviews = reviews.filter(r => r.showId === showId);
+  const showReviews = reviews.filter(r => String(r.showId) === String(showId));
   
   // Return the reviews sorted by newest first (highest ID)
   res.json(showReviews.sort((a, b) => b.id - a.id));
